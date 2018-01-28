@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Chat</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+</head>
+
+<body>
+  <form name="socket">
+    <input type="text" name="message" placeholder="message to the server" />
+    <div>
+      <button>send</button>
+    </div>
+  </form>
+  <div id="logger"></div>
+
+  <script>
+    const socket = io('{{ connection_string }}');
+
+    const createLogger = prefix => (...args) => {
+      const item = document.createElement('div');
+
+      item.innerHTML = `
+        ${new Date()} - ${prefix}
+        ${args.map(data => `<pre>${JSON.stringify(data, null, 2)}</pre>`).join('')}
+      `;
+      document.getElementById('logger').prepend(item);
+    }
+
+    [
+      'connect',
+      'connect_error',
+      'error',
+      'disconnect',
+      'reconnect',
+      'reconnect_attempt',
+      'reconnecting',
+      'reconnect_error',
+      'reconnect_failed',
+      'ping',
+      'pong',
+      'form_status',
+    ].forEach(event => socket.on(event, createLogger(event)))
+
+    document.forms.socket.addEventListener('submit', event => {
+      event.preventDefault();
+      socket.emit('form', { message: event.target.message.value });
+    })
+  </script>
+
+</body>
+
+</html>
