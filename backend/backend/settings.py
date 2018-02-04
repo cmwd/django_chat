@@ -76,10 +76,9 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'chat',
-        'USER': 'piotrwojtkowiak',
-        'PASSWORD': 'piotrwojtkowiak',
-        'HOST': 'localhost',
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'HOST': 'db',
         'PORT': 5432
     }
 }
@@ -122,3 +121,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.0/howto/static-files/
 
 STATIC_URL = '/static/'
+
+CELERY_BROKER_URL = "amqp://guest:guest@rabbit:5672//"
