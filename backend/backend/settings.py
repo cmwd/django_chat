@@ -122,4 +122,6 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CELERY_BROKER_URL = "amqp://guest:guest@rabbit:5672//"
+
+CELERY_BROKER_URL = 'amqp://{0}:{1}@{2}/{3}'.format(
+    os.environ['BROKER_USER'], os.environ['BROKER_PASS'], os.environ['BROKER_HOSTNAME'], os.environ['BROKER_VHOST'])

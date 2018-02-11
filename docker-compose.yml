@@ -22,6 +22,12 @@ services:
       dockerfile: backend.dockerfile
     image: web:latest  # will build an image using `build` and name it like this.
     command: python manage.py runserver 0.0.0.0:8000
+    environment:
+      - BROKER_PASS=${RABBITMQ_PASS}
+      - BROKER_USER=${RABBITMQ_USER}
+      - BROKER_VHOST=${RABBITMQ_VHOST}
+      - BROKER_QUEUE=${BROKER_QUEUE}
+      - BROKER_HOSTNAME=rabbit
     volumes:
       - ./backend:/code
     ports:
@@ -55,15 +61,16 @@ services:
       args:
         - NODE_ENV=development
       dockerfile: chat.dockerfile
-    command: ../node_modules/.bin/nodemon --legacy-watch --inspect=0.0.0.0:9229 index.js
+    command: >
+      /bin/bash -c "sleep 10; ../node_modules/.bin/nodemon --legacy-watch --inspect=0.0.0.0:9229 index.js"
     image: chat:latest
     environment:
       - NODE_ENV=development
       - BROKER_PASS=${RABBITMQ_PASS}
       - BROKER_USER=${RABBITMQ_USER}
       - BROKER_VHOST=${RABBITMQ_VHOST}
-      - BROKER_QUEUE=${RABBITMQ_QUEUE}
-      - BROKER_HOSTNAME=broker
+      - BROKER_QUEUE=${BROKER_QUEUE}
+      - BROKER_HOSTNAME=rabbit
     volumes:
       - ./chat:/opt/app
       - notused:/opt/app/node_modules
@@ -76,7 +83,7 @@ services:
     depends_on:
       - rabbit
     links:
-      - rabbit:broker
+      - rabbit:rabbit
 
 volumes:
   notused:

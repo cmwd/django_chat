@@ -35,7 +35,7 @@ function Broker({ queue, channel }) {
     publish: payload =>
       channel.sendToQueue(
         queue,
-        Buffer.from(JSON.stringify({ payload, pid, name: W_KEY }))
+        Buffer.from(JSON.stringify({ payload, pid, name: W_NAME }))
       )
   };
 }
