@@ -11,6 +11,10 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
+    environment:
+      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
+      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
+      - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST}
 
   web:
     build:
@@ -43,3 +47,36 @@ services:
     links:
       - db:db
       - rabbit:rabbit
+
+
+  chat:
+    build:
+      context: ./chat
+      args:
+        - NODE_ENV=development
+      dockerfile: chat.dockerfile
+    command: ../node_modules/.bin/nodemon --legacy-watch --inspect=0.0.0.0:9229 index.js
+    image: chat:latest
+    environment:
+      - NODE_ENV=development
+      - BROKER_PASS=${RABBITMQ_PASS}
+      - BROKER_USER=${RABBITMQ_USER}
+      - BROKER_VHOST=${RABBITMQ_VHOST}
+      - BROKER_QUEUE=${RABBITMQ_QUEUE}
+      - BROKER_HOSTNAME=broker
+    volumes:
+      - ./chat:/opt/app
+      - notused:/opt/app/node_modules
+    ports:
+      - "3000:3000"
+      - "9229:9229"
+    expose:
+      - "3000"
+      - "9229"
+    depends_on:
+      - rabbit
+    links:
+      - rabbit:broker
+
+volumes:
+  notused:
