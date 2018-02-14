@@ -11,10 +11,8 @@ services:
     ports:
       - "5672:5672"
       - "15672:15672"
-    environment:
-      - RABBITMQ_DEFAULT_PASS=${RABBITMQ_PASS}
-      - RABBITMQ_DEFAULT_USER=${RABBITMQ_USER}
-      - RABBITMQ_DEFAULT_VHOST=${RABBITMQ_VHOST}
+    env_file:
+      - ./envs/rabbit.env
 
   web:
     build:
@@ -22,12 +20,9 @@ services:
       dockerfile: backend.dockerfile
     image: web:latest  # will build an image using `build` and name it like this.
     command: python manage.py runserver 0.0.0.0:8000
-    environment:
-      - BROKER_PASS=${RABBITMQ_PASS}
-      - BROKER_USER=${RABBITMQ_USER}
-      - BROKER_VHOST=${RABBITMQ_VHOST}
-      - BROKER_QUEUE=${BROKER_QUEUE}
-      - BROKER_HOSTNAME=rabbit
+    env_file:
+      - ./envs/web.env
+      - ./envs/db.env
     volumes:
       - ./backend:/code
     ports:
@@ -41,8 +36,6 @@ services:
       - db:db
       - rabbit:rabbit
 
-
-
   celery:
     image: web:latest  # uses the one above
     command: celery -A backend worker -l info
@@ -54,7 +47,6 @@ services:
       - db:db
       - rabbit:rabbit
 
-
   chat:
     build:
       context: ./chat
@@ -64,13 +56,10 @@ services:
     command: >
       /bin/bash -c "sleep 10; ../node_modules/.bin/nodemon --legacy-watch --inspect=0.0.0.0:9229 index.js"
     image: chat:latest
+    env_file:
+      - ./envs/rabbit.env
     environment:
       - NODE_ENV=development
-      - BROKER_PASS=${RABBITMQ_PASS}
-      - BROKER_USER=${RABBITMQ_USER}
-      - BROKER_VHOST=${RABBITMQ_VHOST}
-      - BROKER_QUEUE=${BROKER_QUEUE}
-      - BROKER_HOSTNAME=rabbit
     volumes:
       - ./chat:/opt/app
       - notused:/opt/app/node_modules

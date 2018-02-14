@@ -76,10 +76,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'db',
-        'PORT': 5432
+        'NAME': os.environ['DB_NAME'],
+        'USER': os.environ['DB_USER'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': int(os.environ['DB_PORT']),
     }
 }
 
@@ -123,5 +123,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-CELERY_BROKER_URL = 'amqp://{0}:{1}@{2}/{3}'.format(
-    os.environ['BROKER_USER'], os.environ['BROKER_PASS'], os.environ['BROKER_HOSTNAME'], os.environ['BROKER_VHOST'])
+CELERY_BROKER_URL = 'amqp://{}:{}@{}/{}'.format(
+    os.environ['BROKER_USER'],
+    os.environ['BROKER_PASS'],
+    os.environ['BROKER_HOSTNAME'],
+    os.environ['BROKER_VHOST']
+)
