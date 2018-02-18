@@ -60,7 +60,6 @@ services:
       - ./envs/common.env
     environment:
       - NODE_ENV=development
-      - RABBITMQ_HOSTNAME=rabbit
     volumes:
       - ./chat:/opt/app
       - notused:/opt/app/node_modules
