@@ -39,6 +39,9 @@ services:
   celery:
     image: web:latest  # uses the one above
     command: celery -A backend worker -l info
+    env_file:
+      - ./envs/common.env
+      - ./envs/db.env
     depends_on:
       - web
       - db
