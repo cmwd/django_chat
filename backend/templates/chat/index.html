@@ -19,7 +19,7 @@
   <div id="logger"></div>
 
   <script>
-    const socket = io('{{ connection_string }}');
+    const socket = io('{{ socket_connection_string }}');
 
     const createLogger = prefix => (...args) => {
       const item = document.createElement('div');

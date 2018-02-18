@@ -25,7 +25,7 @@ SECRET_KEY = ')%*qdu%ud!7!fro%3-h*y#*xs)z!_0z9mk2)c8j(uxn@(_h@h$'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["*"]
 
 
 # Application definition
@@ -76,10 +76,10 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'HOST': 'db',
-        'PORT': 5432
+        'NAME': os.environ['DB_NAME'],
+        'USER': os.environ['DB_USER'],
+        'HOST': os.environ['DB_HOST'],
+        'PORT': int(os.environ['DB_PORT']),
     }
 }
 
@@ -122,4 +122,10 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-CELERY_BROKER_URL = "amqp://guest:guest@rabbit:5672//"
+
+CELERY_BROKER_URL = 'amqp://{}:{}@{}/{}'.format(
+    os.environ['BROKER_USER'],
+    os.environ['BROKER_PASS'],
+    os.environ['BROKER_HOSTNAME'],
+    os.environ['BROKER_VHOST']
+)
