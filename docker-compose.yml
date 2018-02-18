@@ -21,7 +21,7 @@ services:
     image: web:latest  # will build an image using `build` and name it like this.
     command: python manage.py runserver 0.0.0.0:8000
     env_file:
-      - ./envs/web.env
+      - ./envs/common.env
       - ./envs/db.env
     volumes:
       - ./backend:/code
@@ -57,7 +57,7 @@ services:
       /bin/bash -c "sleep 10; ../node_modules/.bin/nodemon --legacy-watch --inspect=0.0.0.0:9229 index.js"
     image: chat:latest
     env_file:
-      - ./envs/rabbit.env
+      - ./envs/common.env
     environment:
       - NODE_ENV=development
     volumes:
